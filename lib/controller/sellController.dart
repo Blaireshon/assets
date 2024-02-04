@@ -81,9 +81,9 @@ class SellController extends GetxController {
   }
 
   void getselectedValue(String selected) {
-    print('hi : ' + selected);
+
     selectedValue2.value = selected;
-    print('hi : ' + selectedValue2.value);
+
   }
 
   //체크박스 클릭했을 때

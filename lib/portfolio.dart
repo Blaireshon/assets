@@ -270,7 +270,7 @@ class Portfolio extends StatelessWidget {
                               backgroundColor: const Color(0xffFCAF17),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
-                              )),
+                              ),elevation: 0,),
                           child: const Text('Sell Symbols',
                               style: TextStyle(
                                   fontSize: 14,

@@ -75,7 +75,7 @@ class Assets extends StatelessWidget {
                   ),
 
                 Padding(
-                  padding: EdgeInsets.only(bottom: 10, top:20),
+                  padding: EdgeInsets.only(bottom: 10, top:15),
                   child: Form(
                     key: _formKey,
                     child: Padding(
@@ -131,13 +131,9 @@ class Assets extends StatelessWidget {
                               },
                               onSaved: (value) {},
                               buttonStyleData: const ButtonStyleData(
-                                padding: EdgeInsets.only(right: 11), // 오른쪽 pa
+                                padding: EdgeInsets.only(right: 20), // 오른쪽 pa
                               ),
                               iconStyleData: IconStyleData(
-                                // icon: Icon(
-                                //   Icons.arrow_drop_down,
-                                //   color: Colors.black45,
-                                // ),
                                 icon: Image.asset(
                                   'assets/down_arrow_icon.png',
                                   width: 18,
@@ -147,7 +143,6 @@ class Assets extends StatelessWidget {
                               ),
                               dropdownStyleData: DropdownStyleData(
                                 decoration: BoxDecoration(
-
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),

@@ -7,10 +7,6 @@ import 'home.dart';
 void main() {
   runApp(
       const MyApp()
-      // ChangeNotifierProvider( // 상태 공유
-      //   create: (context) => CheckboxState(), //공유할 상태를 만들어주는 함수를 설정
-      //   child: MyApp(),
-      // )
   );
 }
 
