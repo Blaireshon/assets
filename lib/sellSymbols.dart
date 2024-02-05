@@ -5,6 +5,8 @@ import 'controller/assetsController.dart';
 import 'controller/sellController.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:intl/intl.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 
 class SellSymbols extends StatelessWidget {
   SellSymbols({super.key});
@@ -13,11 +15,14 @@ class SellSymbols extends StatelessWidget {
   final SellController sellController = Get.put(SellController());
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+
+
   var numberFormat = NumberFormat('#,###');
 
   @override
   Widget build(BuildContext context) {
     String? selectedValue = Get.arguments;
+    Color buttonColor = sellController.chkLock.value ? Color(0xffEF292B) : Color(0xffC6CBD0);
 
     return Scaffold(
       appBar: AppBar(
@@ -26,7 +31,7 @@ class SellSymbols extends StatelessWidget {
         // 스크롤 할 때 appbar컬러 바뀐는거 고정
         centerTitle: true,
         // title 가운데
-        leading:const  BackButton(),
+        leading: const BackButton(),
         title: const FittedBox(
             child: Text(
           'Sell Symbols',
@@ -39,7 +44,7 @@ class SellSymbols extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.filter_alt, color: Colors.black),
             onPressed: () {
-              _displayDialog(context);
+              _displayFilters(context);
               //  AlertDialog(
               //   shape: RoundedRectangleBorder(
               //     borderRadius: BorderRadius.circular(5),
@@ -102,8 +107,6 @@ class SellSymbols extends StatelessWidget {
               //         ),
               // );
               //insetPadding: const  EdgeInsets.fromLTRB(0,0,0, 0), // 위젯의 내부 여백
-
-              // 팝업 창을 띄우는 로직을 작성하세요.
             },
           ),
         ],
@@ -119,7 +122,7 @@ class SellSymbols extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Padding(
-            padding:const  EdgeInsets.only(bottom: 15, top: 15),
+            padding: const EdgeInsets.only(bottom: 15, top: 15),
             child: Form(
               key: _formKey,
               child: Padding(
@@ -196,10 +199,9 @@ class SellSymbols extends StatelessWidget {
           ),
           Obx(
             () => Expanded(
-              child: SizedBox(
+              child: Container(
                 width: MediaQuery.of(context).size.width,
                 child: DataTable2(
-
                   headingRowColor: MaterialStateColor.resolveWith(
                       (states) => const Color(0xffF6F7F9)),
                   // 헤더 컬러
@@ -212,14 +214,19 @@ class SellSymbols extends StatelessWidget {
                   //row 높이
                   headingRowHeight: 51.0,
                   // 헤더 높이
-                  columnSpacing: 20,
+                  columnSpacing: 10,
+                  // 0 : 텍스트 내용의 길이로 설정
                   horizontalMargin: 24,
 
                   minWidth: MediaQuery.of(context).size.width,
                   columns: [
                     DataColumn2(
+                      fixedWidth: (MediaQuery.of(context).size.width -48) * .1,
                       label: Checkbox(
                         value: sellController.isChecked.value,
+
+
+
                         side: const BorderSide(
                           color: Color(0xff8C949E),
                         ),
@@ -230,38 +237,57 @@ class SellSymbols extends StatelessWidget {
                           sellController.CheckboxState('all', !value!);
                         },
                       ),
-                      size: ColumnSize.S,
-                    ),
-                    const DataColumn2(
-                      label: Text('Symbol'),
-                      size: ColumnSize.M,
-                    ),
-                    const DataColumn2(
-                      label: Text('Vol.'),
-                      size: ColumnSize.M,
                     ),
                     DataColumn2(
-                      label: Row(
+                      fixedWidth: (MediaQuery.of(context).size.width -48)  * .25,
+                      label: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text('Price'),
-                          // SizedBox(width: 2),
-                          IconButton(
-                              onPressed: () {
-                                print('exclamation');
-                              },
-                              icon: Image.asset(
-                                'assets/exclamation_circle_icon.png',
-                                width: 18,
-                                height: 18,
-                                color:const  Color(0xffFCAF17),
-                              )),
+                          //width: MediaQuery.of(context).size.width * .2,
+                          Text('Symbol'),
                         ],
                       ),
-                      size: ColumnSize.L,
                     ),
-                    const DataColumn2(
-                      label: Text(''),
-                      size: ColumnSize.S,
+                    DataColumn2(
+                      fixedWidth: (MediaQuery.of(context).size.width -48)  * .29,
+                      label: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            //color: Colors.red,
+                            //width: MediaQuery.of(context).size.width * .2,
+                            Text('Vol.')
+                          ]),
+                    ),
+                    DataColumn2(
+                      fixedWidth: (MediaQuery.of(context).size.width -48)  * .25,
+                      label: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('Price'),
+                          InkWell(
+                              onTap: () {
+                                print('exclamation');
+                              },
+                              child:const Padding(
+                                padding: EdgeInsets.only(left :4.0),
+                                child:  Icon(
+                                  Icons.error_outline,
+                                  color:Color(0xffFCAF17),
+                                  size: 18,
+                                ),
+                              ),
+                            ),
+
+                        ],
+                      ),
+                    ),
+                    DataColumn2(
+                      fixedWidth:(MediaQuery.of(context).size.width - 48) * .1,
+                      label: Container(
+                          color: Colors.red,
+                          //width: MediaQuery.of(context).size.width * .2,
+                          child: Text('')),
+                      //size: ColumnSize.S,
                     ),
                   ],
 
@@ -282,7 +308,7 @@ class SellSymbols extends StatelessWidget {
                               ),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5)),
-                              activeColor:const  Color(0xffFCAF17),
+                              activeColor: const Color(0xffFCAF17),
                               onChanged: (bool? value) {
                                 sellController.CheckboxState(
                                     index.toString(), !value!);
@@ -290,26 +316,58 @@ class SellSymbols extends StatelessWidget {
                             ),
                           ),
                           DataCell(
-                            Text(
-                              asset['symbol'],
-                              style: const TextStyle(),
-                            ),
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    asset['symbol'],
+                                    style: const TextStyle(),
+                                  ),
+                                ]),
                           ),
-                          DataCell(Text(
-                            numberFormat.format(asset['qty']),
-                            style: const TextStyle(),
-                          )),
-                          DataCell(Text(
-                            asset['price'],
-                            style: const TextStyle(),
-                          )),
+                          DataCell(Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  numberFormat.format(asset['qty']),
+                                  style: const TextStyle(),
+                                )
+                              ])),
                           DataCell(
-                            Image.asset(
-                              'assets/writing_icon.png',
-                              width: 18,
-                              height: 18,
-                              color: const Color(0xff8C949E),
-                            ),
+
+                              Container(
+                                margin:EdgeInsets.only(left: 8, right: 8),
+                                padding: EdgeInsets.only(top :10, bottom: 10),
+
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color:Color(0xffF6F7F9),
+                                ),
+                                child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    asset['price'],
+                                    style: const TextStyle(),
+                                  )
+                                ]),
+                              )),
+                          DataCell(
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      _displayPriceChange(context);
+                                    },
+                                    child: Image.asset(
+                                      'assets/writing_icon.png',
+                                      width: 18,
+                                      height: 18,
+                                      color: const Color(0xff8C949E),
+                                    ),
+                                  )
+                                ]),
                           ),
                         ],
                       );
@@ -319,19 +377,46 @@ class SellSymbols extends StatelessWidget {
                           const DataCell(
                             Text(''),
                           ),
-                          DataCell(Text(
-                            asset['symbol'],
-                            style: const TextStyle(),
-                          )),
-                          DataCell(Text(
-                            numberFormat.format(asset['qty']),
-                            style: const TextStyle(),
-                          )),
-                          DataCell(Text(
-                            asset['price'],
-                            style: const TextStyle(),
-                          )),
-                          const DataCell(Text('')),
+                          DataCell(
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  asset['symbol'],
+                                  style: const TextStyle(),
+                                ),
+                              ],
+                            ),
+                          ),
+                          DataCell(Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  numberFormat.format(asset['qty']),
+                                  style: const TextStyle(),
+                                )
+                              ])),
+                          DataCell(
+                              Container(
+                                margin:EdgeInsets.only(left: 8, right: 8),
+                                padding: EdgeInsets.only(top :10, bottom: 10),
+
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color:Color(0xffF6F7F9),
+                                ),
+                                child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    asset['price'],
+                                    style: const TextStyle(),
+                                  )
+                                ]),
+                              )),
+                          const DataCell(Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [Text('')])),
                         ],
                         // onSelectChanged: (bool? selected) {
                         //   selected == null
@@ -348,6 +433,7 @@ class SellSymbols extends StatelessWidget {
                   //   fontWeight: FontWeight.bold,
                   // ),
                 ),
+
               ),
             ),
           ),
@@ -402,6 +488,7 @@ class SellSymbols extends StatelessWidget {
           //        ),
         ],
       ),
+
       bottomNavigationBar: Padding(
         padding:
             const EdgeInsets.only(right: 24, left: 24, top: 10, bottom: 20),
@@ -411,31 +498,67 @@ class SellSymbols extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
-                  child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xffEF292B),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+
+            child: ElevatedButton(
+                        onPressed: ()  {
+                          sellController.sellButton();
+                          _showToast(context,sellController.toastMessage.value);
+                          },
+                        style: ElevatedButton.styleFrom(
+
+                          backgroundColor: Color(0xffEF292B) ,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          elevation: 0,
                         ),
-                        elevation: 0,
-                      ),
-                      child: const Text('Sell',
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white))),
+                        child: const Text('Sell',
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white))),
+
                 ),
               ],
             )),
       ),
     );
   }
+  void _showToast(context,text) {
+    final fToast = FToast();
+    fToast.init(context);
+    Widget toast =
+    Container(
+      width: MediaQuery.of(context).size.width-50,
+      padding: const EdgeInsets.symmetric(horizontal: 24.0,vertical: 12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        color: Color(0xff67CC36),
+      ),
+      child: Center(child: Text(text,style: TextStyle(color:Colors.white), textAlign: TextAlign.center,overflow: TextOverflow.ellipsis,maxLines: 5,)),
+    );
 
-  void _displayDialog(BuildContext context) {
+    fToast.showToast(
+        child: toast,
+        toastDuration: const Duration(seconds: 3),
+        positionedToastBuilder: (context, child) {
+          return Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned(
+                child: child,
+                top: 100,
+              ),
+            ],
+          );
+        }
+    );
+  }
+
+  void _displayFilters(BuildContext context) {
     showGeneralDialog(
         barrierLabel: "Barrier",
-        barrierDismissible: true,
+        barrierDismissible: false,
         barrierColor: Colors.black.withOpacity(0.5),
         context: context,
         pageBuilder: (context, animation, secondaryAnimation) {
@@ -447,8 +570,9 @@ class SellSymbols extends StatelessWidget {
               backgroundColor: Colors.black.withOpacity(0.5),
               body: Obx(
                 () => Container(
-                  padding: const EdgeInsets.only(bottom: 10, right: 24, left: 24),
-                  decoration:const  BoxDecoration(
+                  padding:
+                      const EdgeInsets.only(bottom: 10, right: 24, left: 24),
+                  decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(10), // 왼쪽 위 모서리
@@ -461,7 +585,7 @@ class SellSymbols extends StatelessWidget {
                         height: 54,
                         color: Colors.blue,
                         // padding: EdgeInsets.only(right: 0),
-                        margin:const  EdgeInsets.only(bottom: 20),
+                        margin: const EdgeInsets.only(bottom: 20),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -472,7 +596,7 @@ class SellSymbols extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black)),
                             IconButton(
-                              icon:const  Icon(Icons.close, size: 24),
+                              icon: const Icon(Icons.close, size: 24),
                               onPressed: () {
                                 Navigator.of(context).pop(); // 창 닫기
                                 sellController.filtersClose();
@@ -483,11 +607,11 @@ class SellSymbols extends StatelessWidget {
                       ),
                       Container(
                         height: 40,
-                        margin:const  EdgeInsets.only(bottom: 20),
+                        margin: const EdgeInsets.only(bottom: 20),
                         child: TextFormField(
                             decoration: InputDecoration(
                                 filled: true,
-                                fillColor:const  Color(0xffF6F7F9),
+                                fillColor: const Color(0xffF6F7F9),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10.0),
                                   borderSide: BorderSide.none,
@@ -495,7 +619,7 @@ class SellSymbols extends StatelessWidget {
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        margin:const  EdgeInsets.only(bottom: 20),
+                        margin: const EdgeInsets.only(bottom: 20),
                         color: Colors.white,
                         child: const Text(
                           'Sell Vol.',
@@ -507,7 +631,7 @@ class SellSymbols extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        decoration:const  BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xffF6F7F9),
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
@@ -517,7 +641,7 @@ class SellSymbols extends StatelessWidget {
                           title: const Text('100%'),
                           value: '1',
                           groupValue: sellController.selectedRadio.value,
-                          activeColor:const  Color(0xffFCAF17),
+                          activeColor: const Color(0xffFCAF17),
                           onChanged: (value) {
                             sellController.setSelectedRadio(value!);
                           },
@@ -531,13 +655,11 @@ class SellSymbols extends StatelessWidget {
                         width: MediaQuery.of(context).size.width,
                         margin: const EdgeInsets.only(bottom: 20),
                         child: RadioListTile(
-                          title:const  Text('50%'),
+                          title: const Text('50%'),
                           value: '2',
                           groupValue: sellController.selectedRadio.value,
-                          activeColor:const  Color(0xffFCAF17),
+                          activeColor: const Color(0xffFCAF17),
                           onChanged: (value) {
-                            print('hi');
-
                             sellController.setSelectedRadio(value!);
                           },
                         ),
@@ -558,7 +680,8 @@ class SellSymbols extends StatelessWidget {
                                   ),
                                   elevation: 0,
                                 ),
-                                child: const Text('Reset',  style: TextStyle(color: Colors.black)),
+                                child: const Text('Reset',
+                                    style: TextStyle(color: Colors.black)),
                               ),
                             ),
                             const SizedBox(width: 15),
@@ -597,6 +720,145 @@ class SellSymbols extends StatelessWidget {
               ),
             ),
           );
+        });
+  }
+
+  void _displayPriceChange(BuildContext context){
+    showGeneralDialog(
+        barrierLabel: "Barrier",
+        barrierDismissible: false,
+        barrierColor: Colors.black.withOpacity(0.5),
+        context: context,
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return Padding(
+
+            padding: EdgeInsets.fromLTRB(
+                0, MediaQuery.of(context).size.height - 437, 0, 200),
+
+            child: Scaffold(
+              body: Container(
+                    // backgroundColor: Colors.white,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                    child:Column(
+                          children: <Widget>[
+                            Container(
+                              height: 54,
+
+                              padding: EdgeInsets.only(left:24, right: 20),
+                              //margin: const EdgeInsets.only(bottom: 20),
+                              // decoration: const BoxDecoration(
+                              //   color: Colors.white,
+                              //   borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                              // ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text('Price change',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black)),
+                                  IconButton(
+                                    icon: const Icon(Icons.close, size: 24),
+                                    onPressed: () {
+                                      Navigator.of(context).pop(); // 창 닫기
+                                      sellController.filtersClose();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                      Container(
+                        color: const Color(0xffEBEEF0),
+                        height: 1.0,
+                        margin: EdgeInsets.only(bottom: 20),
+                      ),
+                        Container(
+                              height: 60,
+
+                              margin: const EdgeInsets.only(bottom: 20,),
+                              padding: const EdgeInsets.only(left:24,right: 24,top:10, bottom: 10),
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children:[
+                              Text('Sell Price'),
+                                Container(
+                                  width: MediaQuery.of(context).size.width/2 ,
+                                  child: TextField(
+
+                                      decoration: InputDecoration(
+                                          filled: true,
+                                          fillColor: const Color(0xffF6F7F9),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(10.0),
+                                            borderSide: BorderSide.none,
+                                          ))),
+                                ),
+                              ]),
+                            ),
+                            Container(
+                              color: Colors.white,
+                              padding: const EdgeInsets.only( left:24, bottom: 20,right: 24),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {},
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(0xffF6F7F9),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      child: const Text('Close',
+                                          style: TextStyle(color: Colors.black)),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  Expanded(
+                                    child:ElevatedButton(
+                                        onPressed: () {
+
+                                          Navigator.of(context).pop();
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: const Color(0xffFCAF17),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          elevation: 0,
+                                        ),
+                                        child: const Text(
+                                          'Confirm',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+
+                                  )
+                                ],
+                              ),
+                            ),
+                            // ElevatedButton(
+                            //   onPressed: () {
+                            //     Navigator.of(context).pop();
+                            //   },
+                            //   child: Text('취소'),
+                            // ),
+                          ],
+                        ),
+
+
+                  ),
+            ),
+          );
+       
+
         });
   }
 }
